@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.library.mapper.BookMapper">
+
+    <resultMap id="bookMap" type="com.library.entity.Book">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="author" property="author"/>
+        <result column="publisher" property="publisher"/>
+        <result column="isbn" property="isbn"/>
+        <result column="category" property="category"/>
+        <result column="total" property="total"/>
+        <result column="available" property="available"/>
+        <result column="description" property="description"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <select id="findById" parameterType="Integer" resultMap="bookMap">
+        SELECT * FROM book WHERE id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="bookMap">
+        SELECT * FROM book ORDER BY id
+    </select>
+
+    <select id="search" parameterType="String" resultMap="bookMap">
+        SELECT * FROM book
+        WHERE name LIKE CONCAT('%', #{keyword}, '%')
+           OR author LIKE CONCAT('%', #{keyword}, '%')
+           OR isbn LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY id
+    </select>
+
+    <insert id="insert" parameterType="com.library.entity.Book" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO book (name, author, publisher, isbn, category, total, available, description)
+        VALUES (#{name}, #{author}, #{publisher}, #{isbn}, #{category}, #{total}, #{available}, #{description})
+    </insert>
+
+    <update id="update" parameterType="com.library.entity.Book">
+        UPDATE book
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="author != null">author = #{author},</if>
+            <if test="publisher != null">publisher = #{publisher},</if>
+            <if test="isbn != null">isbn = #{isbn},</if>
+            <if test="category != null">category = #{category},</if>
+            <if test="total != null">total = #{total},</if>
+            <if test="available != null">available = #{available},</if>
+            <if test="description != null">description = #{description},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="Integer">
+        DELETE FROM book WHERE id = #{id}
+    </delete>
+
+    <update id="decreaseAvailable" parameterType="Integer">
+        UPDATE book SET available = available - 1 WHERE id = #{id} AND available > 0
+    </update>
+
+    <update id="increaseAvailable" parameterType="Integer">
+        UPDATE book SET available = available + 1 WHERE id = #{id}
+    </update>
+
+</mapper>
