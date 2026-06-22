@@ -1,0 +1,21 @@
+package com.library.interceptor;
+
+import com.library.entity.User;
+import org.springframework.web.servlet.HandlerInterceptor;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class AdminInterceptor implements HandlerInterceptor {
+
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
+        User user = (User) request.getSession().getAttribute("loginUser");
+        if (user == null || !user.isAdmin()) {
+            response.sendRedirect(request.getContextPath() + "/index");
+            return false;
+        }
+        return true;
+    }
+}
